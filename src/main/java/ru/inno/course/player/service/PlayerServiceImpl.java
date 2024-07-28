@@ -56,6 +56,11 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
+    public void save(String nick) {
+
+    }
+
+    @Override
     public int addPoints(int playerId, int points) {
         if ( !this.players.containsKey(playerId)){
             throw new NoSuchElementException("No such user: " + playerId);
@@ -67,6 +72,11 @@ public class PlayerServiceImpl implements PlayerService {
         player.setPoints(newPoints);
         saveToFile();
         return player.getPoints();
+    }
+
+    @Override
+    public Map<Integer, Player> addId(int id, String playerId) {
+        return players;
     }
 
     private void initStorages() {

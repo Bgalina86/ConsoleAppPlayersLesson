@@ -1,4 +1,4 @@
-package ru.inno.course.player;
+package ru.inno.course.player.myFramework;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import ru.inno.course.player.model.Player;
 import ru.inno.course.player.service.PlayerService;
 import ru.inno.course.player.service.PlayerServiceImpl;
 
-public class MyTest {
+public class MyTestOld {
 
     public static void main(String[] args) throws Exception {
         Files.deleteIfExists(Path.of("./data.json"));// удаление файла перед запуском теста

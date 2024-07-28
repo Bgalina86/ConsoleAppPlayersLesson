@@ -7,7 +7,9 @@ import java.util.Collection;
 
 public interface DataProvider {
 
-    void save(Collection<Player> players) throws IOException;
+    void save(String players) throws IOException;
 
     Collection<Player> load() throws IOException;
+
+    void save(Collection<Player> values);
 }
