@@ -5,15 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import ext.PlayersAndIdProvider;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.TreeSet;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import ru.inno.course.player.data.DataProvider;
+import ru.inno.course.player.data.DataProviderJSON;
 import ru.inno.course.player.model.Player;
 import ru.inno.course.player.service.PlayerService;
 import ru.inno.course.player.service.PlayerServiceImpl;
@@ -32,7 +30,7 @@ public class PlayerServiceTest {
     private PlayerService service;
     private static final String NICKNAME = "Nikita";
 
-    // hooks - хуки
+    // hooks - С…СѓРєРё
     @BeforeEach
     public void setUp() {
         service = new PlayerServiceImpl();
@@ -52,8 +50,8 @@ public class PlayerServiceTest {
     }
 
     @Test
-    @Tag("позитивные")
-    @DisplayName("позитивные №1 Создаем игрока и проверяем его значения по дефолту + позитивные №7 (добавить игрока) - получить игрока по id (3, 5)")
+    @Tag("РїРѕР·РёС‚РёРІРЅС‹Рµ")
+    @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–1 РЎРѕР·РґР°РµРј РёРіСЂРѕРєР° Рё РїСЂРѕРІРµСЂСЏРµРј РµРіРѕ Р·РЅР°С‡РµРЅРёСЏ РїРѕ РґРµС„РѕР»С‚Сѓ + РїРѕР·РёС‚РёРІРЅС‹Рµ в„–7 (РґРѕР±Р°РІРёС‚СЊ РёРіСЂРѕРєР°) - РїРѕР»СѓС‡РёС‚СЊ РёРіСЂРѕРєР° РїРѕ id (3, 5)")
     public void iCanAddNewPlayer() {
         Collection<Player> listBefore = service.getPlayers();
         assertEquals(0, listBefore.size());
@@ -68,8 +66,8 @@ public class PlayerServiceTest {
     }
 
     @Test
-    @Tag("позитивные")
-    @DisplayName("позитивные №2 (добавить игрока) - удалить игрока - проверить отсутствие в списке (2,3)")
+    @Tag("РїРѕР·РёС‚РёРІРЅС‹Рµ")
+    @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–2 (РґРѕР±Р°РІРёС‚СЊ РёРіСЂРѕРєР°) - СѓРґР°Р»РёС‚СЊ РёРіСЂРѕРєР° - РїСЂРѕРІРµСЂРёС‚СЊ РѕС‚СЃСѓС‚СЃС‚РІРёРµ РІ СЃРїРёСЃРєРµ (2,3)")
     public void iCanDeletePlayer() {
         Collection<Player> listBefore = service.getPlayers();
         assertTrue(listBefore.isEmpty());
@@ -93,8 +91,8 @@ public class PlayerServiceTest {
     }
 
     @Test
-    @Tag("позитивные")
-    @DisplayName("позитивные №7 (добавить игрока) - получить игрока по id")
+    @Tag("РїРѕР·РёС‚РёРІРЅС‹Рµ")
+    @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–7 (РґРѕР±Р°РІРёС‚СЊ РёРіСЂРѕРєР°) - РїРѕР»СѓС‡РёС‚СЊ РёРіСЂРѕРєР° РїРѕ id")
     public void iCanAddPlayer() {
         Collection<Player> listBefore = service.getPlayers();
         assertTrue(listBefore.isEmpty());
@@ -110,8 +108,8 @@ public class PlayerServiceTest {
 
     @ParameterizedTest
     @ArgumentsSource(ru.inno.course.player.ext.PointsProvider.class)
-    @Tag("позитивные")
-    @DisplayName("позитивные №5 Добавление очков игроку")
+    @Tag("РїРѕР·РёС‚РёРІРЅС‹Рµ")
+    @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–5 Р”РѕР±Р°РІР»РµРЅРёРµ РѕС‡РєРѕРІ РёРіСЂРѕРєСѓ")
     public void iCanAddPoints2(int pointsToAdd, int pointsToBe) {
 
         int playerId = service.createPlayer(NICKNAME);
@@ -121,9 +119,9 @@ public class PlayerServiceTest {
     }
 
     @ParameterizedTest
-    @Tag("позитивные")
+    @Tag("РїРѕР·РёС‚РёРІРЅС‹Рµ")
     @ArgumentsSource(ru.inno.course.player.ext.PlayersAndPointsProvider.class)
-    @DisplayName("позитивные №6 Добавление очков игроку c ненулевым балансом")
+    @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–6 Р”РѕР±Р°РІР»РµРЅРёРµ РѕС‡РєРѕРІ РёРіСЂРѕРєСѓ c РЅРµРЅСѓР»РµРІС‹Рј Р±Р°Р»Р°РЅСЃРѕРј")
     public void iCanAddPoints3(Player player, int pointsToAdd, int pointsToBe) {
         int id = service.createPlayer(player.getNick());
         service.addPoints(id, player.getPoints());
@@ -134,8 +132,8 @@ public class PlayerServiceTest {
     }
 
     @Test
-    @Tag("позитивные")
-    @DisplayName("позитивные №10 Проверить, что id всегда уникальный. Создать 5, удалить 3-го, добавить еще одного -> id == 6 (а не 3) (1, 2)")
+    @Tag("РїРѕР·РёС‚РёРІРЅС‹Рµ")
+    @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–10 РџСЂРѕРІРµСЂРёС‚СЊ, С‡С‚Рѕ id РІСЃРµРіРґР° СѓРЅРёРєР°Р»СЊРЅС‹Р№. РЎРѕР·РґР°С‚СЊ 5, СѓРґР°Р»РёС‚СЊ 3-РіРѕ, РґРѕР±Р°РІРёС‚СЊ РµС‰Рµ РѕРґРЅРѕРіРѕ -> id == 6 (Р° РЅРµ 3) (1, 2)")
     public void iCanIdUnique5() {
 
         int playerId1 = service.createPlayer("Player1");
@@ -158,8 +156,8 @@ public class PlayerServiceTest {
     }
 
     @Test
-    @Tag("позитивные")
-    @DisplayName("позитивные №3 (нет json-файла) добавить игрока (1, 6, 8)")
+    @Tag("РїРѕР·РёС‚РёРІРЅС‹Рµ")
+    @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–3 (РЅРµС‚ json-С„Р°Р№Р»Р°) РґРѕР±Р°РІРёС‚СЊ РёРіСЂРѕРєР° (1, 6, 8)")
     public void iCanAddPlayer1() {
         Player player1 = new Player();
         player1.setNick("Player 1");
@@ -169,8 +167,8 @@ public class PlayerServiceTest {
     }
 
     @Test
-    @Tag("позитивные")// сделать через service
-    @DisplayName("позитивные №12 Проверить создание игрока с 15 символами (10)")
+    @Tag("РїРѕР·РёС‚РёРІРЅС‹Рµ")// СЃРґРµР»Р°С‚СЊ С‡РµСЂРµР· service
+    @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–12 РџСЂРѕРІРµСЂРёС‚СЊ СЃРѕР·РґР°РЅРёРµ РёРіСЂРѕРєР° СЃ 15 СЃРёРјРІРѕР»Р°РјРё (10)")
     public void iCanAddPlayer15Size() {
         Player player1 = new Player();
         player1.setNick("012345678901234");
@@ -178,59 +176,72 @@ public class PlayerServiceTest {
         String playerNik = player1.getNick();
         int sizePlayerNik = playerNik.length();
 
-        assertEquals(sizePlayerNik,15);
+        assertEquals(sizePlayerNik, 15);
     }
 
     @Test
-    @Tag("позитивные")
-    @DisplayName("позитивные №4 (есть json-файл) добавить игрока (1, 6)")
-    public void iCanAddFileJSON(){
+    @Tag("РїРѕР·РёС‚РёРІРЅС‹Рµ")
+    @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–4 (РµСЃС‚СЊ json-С„Р°Р№Р») РґРѕР±Р°РІРёС‚СЊ РёРіСЂРѕРєР° (1, 6)")
+    public void iCanAddFileJSON() {
+        Collection<Player> listBefore = service.getPlayers();
+        assertTrue(listBefore.isEmpty());
 
+        int nikitaId = service.createPlayer("Player1");
+        Player playerById = service.getPlayerById(nikitaId);
+        assertEquals(NICKNAME, playerById.getNick());
     }
-
-    //   @DisplayName("позитивные №8 проверить корректность сохранения в файл (1, 4, 6)")
-    //   @DisplayName("позитивные №9 проверить корректность загрузки json-файла - не потеряли записи (7)- не "побили" записи (4, 7)")
-
-    //   @DisplayName("позитивные №11 (нет json-файла) запросить список игроков (3, 8)")
-
-
-    //НЕГАТИВНЫЕ ТЕСТЫ
-    // @DisplayName("негативный №1. удалить игрока, которого нет - удалить игрока 10, хотя последний - 8 (2, 3))
-    // @DisplayName("негативный №4. сохранить игрока с пустым ником (10))
-    // @DisplayName("негативный №6. Накинуть очков игроку, которого нет (4))
-    // @DisplayName("негативный №7. Накинуть очков без указания id (4))
-    // @DisplayName("негативный №8. Ввести невалидный id (String) (5))
-    // @DisplayName("негативный №9. Проверить загрузку системы с другим json-файлом (7))
-    // @DisplayName("негативный №10. Начислить 1.5 балла игроку (10))
-    // @DisplayName("негативный №11. проверить корректность загрузки json-файла- есть дубликаты (9))
-    // @DisplayName("негативный №12. Проверить создание игрока с 16 символами (10) - название (что? где? когда?)- шаги воспроизведения (curl)
-    //- ожидаемый результат - полученный результат - логи / скрины / видео - приоритет (средний) - серьезность (средняя) - на каком стенде - версия
-    //- плановая дата fix'а - компоненты - линки на другие задачи - назначение - автор - причина дефекта - даты - предусловия
     @Test
-    @Tag("негативный")
-    @DisplayName("негативный №2 Нельзя создать дубликат игрока")
+    @Tag("РїРѕР·РёС‚РёРІРЅС‹Рµ")
+     @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–8 РїСЂРѕРІРµСЂРёС‚СЊ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ СЃРѕС…СЂР°РЅРµРЅРёСЏ РІ С„Р°Р№Р» (1, 4, 6)")
+    public void iCanCorrectSavingToFile(){
+        Collection<Player> listBefore = service.getPlayers();
+        assertTrue(listBefore.isEmpty());
+
+        int nikitaId = service.createPlayer("Player1");
+        Player playerById = service.getPlayerById(nikitaId);
+        assertEquals(NICKNAME, playerById.getNick());
+    }
+    //   @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–9 РїСЂРѕРІРµСЂРёС‚СЊ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ Р·Р°РіСЂСѓР·РєРё json-С„Р°Р№Р»Р° - РЅРµ РїРѕС‚РµСЂСЏР»Рё Р·Р°РїРёСЃРё (7)- РЅРµ "РїРѕР±РёР»Рё" Р·Р°РїРёСЃРё (4, 7)")
+
+    //   @DisplayName("РїРѕР·РёС‚РёРІРЅС‹Рµ в„–11 (РЅРµС‚ json-С„Р°Р№Р»Р°) Р·Р°РїСЂРѕСЃРёС‚СЊ СЃРїРёСЃРѕРє РёРіСЂРѕРєРѕРІ (3, 8)")
+
+
+    //РќР•Р“РђРўРР’РќР«Р• РўР•РЎРўР«
+    // @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–1. СѓРґР°Р»РёС‚СЊ РёРіСЂРѕРєР°, РєРѕС‚РѕСЂРѕРіРѕ РЅРµС‚ - СѓРґР°Р»РёС‚СЊ РёРіСЂРѕРєР° 10, С…РѕС‚СЏ РїРѕСЃР»РµРґРЅРёР№ - 8 (2, 3))
+    // @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–4. СЃРѕС…СЂР°РЅРёС‚СЊ РёРіСЂРѕРєР° СЃ РїСѓСЃС‚С‹Рј РЅРёРєРѕРј (10))
+    // @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–6. РќР°РєРёРЅСѓС‚СЊ РѕС‡РєРѕРІ РёРіСЂРѕРєСѓ, РєРѕС‚РѕСЂРѕРіРѕ РЅРµС‚ (4))
+    // @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–7. РќР°РєРёРЅСѓС‚СЊ РѕС‡РєРѕРІ Р±РµР· СѓРєР°Р·Р°РЅРёСЏ id (4))
+    // @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–8. Р’РІРµСЃС‚Рё РЅРµРІР°Р»РёРґРЅС‹Р№ id (String) (5))
+    // @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–9. РџСЂРѕРІРµСЂРёС‚СЊ Р·Р°РіСЂСѓР·РєСѓ СЃРёСЃС‚РµРјС‹ СЃ РґСЂСѓРіРёРј json-С„Р°Р№Р»РѕРј (7))
+    // @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–10. РќР°С‡РёСЃР»РёС‚СЊ 1.5 Р±Р°Р»Р»Р° РёРіСЂРѕРєСѓ (10))
+    // @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–11. РїСЂРѕРІРµСЂРёС‚СЊ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ Р·Р°РіСЂСѓР·РєРё json-С„Р°Р№Р»Р°- РµСЃС‚СЊ РґСѓР±Р»РёРєР°С‚С‹ (9))
+    // @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–12. РџСЂРѕРІРµСЂРёС‚СЊ СЃРѕР·РґР°РЅРёРµ РёРіСЂРѕРєР° СЃ 16 СЃРёРјРІРѕР»Р°РјРё (10) - РЅР°Р·РІР°РЅРёРµ (С‡С‚Рѕ? РіРґРµ? РєРѕРіРґР°?)- С€Р°РіРё РІРѕСЃРїСЂРѕРёР·РІРµРґРµРЅРёСЏ (curl)
+    //- РѕР¶РёРґР°РµРјС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚ - РїРѕР»СѓС‡РµРЅРЅС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚ - Р»РѕРіРё / СЃРєСЂРёРЅС‹ / РІРёРґРµРѕ - РїСЂРёРѕСЂРёС‚РµС‚ (СЃСЂРµРґРЅРёР№) - СЃРµСЂСЊРµР·РЅРѕСЃС‚СЊ (СЃСЂРµРґРЅСЏСЏ) - РЅР° РєР°РєРѕРј СЃС‚РµРЅРґРµ - РІРµСЂСЃРёСЏ
+    //- РїР»Р°РЅРѕРІР°СЏ РґР°С‚Р° fix'Р° - РєРѕРјРїРѕРЅРµРЅС‚С‹ - Р»РёРЅРєРё РЅР° РґСЂСѓРіРёРµ Р·Р°РґР°С‡Рё - РЅР°Р·РЅР°С‡РµРЅРёРµ - Р°РІС‚РѕСЂ - РїСЂРёС‡РёРЅР° РґРµС„РµРєС‚Р° - РґР°С‚С‹ - РїСЂРµРґСѓСЃР»РѕРІРёСЏ
+    @Test
+    @Tag("РЅРµРіР°С‚РёРІРЅС‹Р№")
+    @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–2 РќРµР»СЊР·СЏ СЃРѕР·РґР°С‚СЊ РґСѓР±Р»РёРєР°С‚ РёРіСЂРѕРєР°")
     public void iCannotCreateADuplicate() {
         service.createPlayer(NICKNAME);
         assertThrows(IllegalArgumentException.class, () -> service.createPlayer(NICKNAME));
     }
 
     @Test
-    @Tags({@Tag("негативный"), @Tag("CRITICAL")})
-    @DisplayName("негативный №3 Нельзя получить несуществующего пользователя")
+    @Tags({@Tag("РЅРµРіР°С‚РёРІРЅС‹Р№"), @Tag("CRITICAL")})
+    @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–3 РќРµР»СЊР·СЏ РїРѕР»СѓС‡РёС‚СЊ РЅРµСЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ")
     public void iCannotGetEmptyUser() {
         assertThrows(NoSuchElementException.class, () -> service.getPlayerById(9999));
     }
 
     @ParameterizedTest
-    @Tag("негативный")
+    @Tag("РЅРµРіР°С‚РёРІРЅС‹Р№")
     @ValueSource(ints = {10, 100, -50, 0, 100, -5000000})
-    @DisplayName("негативный №5 Добавление очков игроку")
+    @DisplayName("РЅРµРіР°С‚РёРІРЅС‹Р№ в„–5 Р”РѕР±Р°РІР»РµРЅРёРµ РѕС‡РєРѕРІ РёРіСЂРѕРєСѓ")
     public void iCanAddPoints(int points) {
         int playerId = service.createPlayer(NICKNAME);
         service.addPoints(playerId, points);
         Player playerById = service.getPlayerById(playerId);
         assertEquals(points, playerById.getPoints());
     }
-
 
 }

@@ -18,7 +18,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public Player getPlayerById(int id) {
-        if ( !this.players.containsKey(id)){
+        if (!this.players.containsKey(id)) {
             throw new NoSuchElementException("No such user: " + id);
         }
 
@@ -32,8 +32,8 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public int createPlayer(String nickname) {
-        if (nicknames.contains(nickname)){
-            throw new IllegalArgumentException("Nickname is already in use: "+ nickname);
+        if (nicknames.contains(nickname)) {
+            throw new IllegalArgumentException("Nickname is already in use: " + nickname);
         }
 
         counter++;
@@ -46,7 +46,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public Player deletePlayer(int id) {
-        if ( !this.players.containsKey(id)){
+        if (!this.players.containsKey(id)) {
             throw new NoSuchElementException("No such user: " + id);
         }
 
@@ -56,35 +56,30 @@ public class PlayerServiceImpl implements PlayerService {
     }
 
     @Override
-    public void save(String nick) {
-
-    }
-
-    @Override
     public int addPoints(int playerId, int points) {
-        if ( !this.players.containsKey(playerId)){
+        if (!this.players.containsKey(playerId)) {
             throw new NoSuchElementException("No such user: " + playerId);
         }
 
         Player player = this.players.get(playerId);
         int currentPoints = player.getPoints();
+
+        if(points > 100){
+            points = 100;
+        }
+
         int newPoints = currentPoints + points;
         player.setPoints(newPoints);
         saveToFile();
         return player.getPoints();
     }
 
-    @Override
-    public Map<Integer, Player> addId(int id, String playerId) {
-        return players;
-    }
-
     private void initStorages() {
         Collection<Player> currentList = Collections.EMPTY_LIST;
         try {
-             currentList = provider.load();
-        } catch (Exception ex){
-            System.err.println("File loading error. "+ ex);
+            currentList = provider.load();
+        } catch (Exception ex) {
+            System.out.println("File loading error. " + ex);
         }
 
         players = new HashMap<>();
@@ -93,7 +88,7 @@ public class PlayerServiceImpl implements PlayerService {
         for (Player player : currentList) {
             players.put(player.getId(), player);
             nicknames.add(player.getNick());
-            if (player.getId() > counter){
+            if (player.getId() > counter) {
                 counter = player.getId();
             }
         }
@@ -102,7 +97,7 @@ public class PlayerServiceImpl implements PlayerService {
     private void saveToFile() {
         try {
             this.provider.save(players.values());
-        } catch (Exception ex){
+        } catch (Exception ex) {
             System.err.println("File saving error");
         }
     }
