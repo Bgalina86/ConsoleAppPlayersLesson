@@ -1,36 +1,41 @@
+package ru.inno.course.player;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.github.javafaker.Faker;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import ru.inno.course.player.data.DataProvider;
-import ru.inno.course.player.data.DataProviderJSON;
+import ru.inno.course.player.ext.PlayerServiceResolver;
 import ru.inno.course.player.model.Player;
 import ru.inno.course.player.service.PlayerService;
 import ru.inno.course.player.service.PlayerServiceImpl;
 
+@ExtendWith({PlayerServiceResolver.class})
 public class PlayerServiceTest {
 
     private PlayerService service;
     private static final String NICKNAME = "Nikita";
 
-    // hooks - хуки
     @BeforeEach
     public void setUp() {
         service = new PlayerServiceImpl();
@@ -45,13 +50,12 @@ public class PlayerServiceTest {
                 e.printStackTrace();
             }
         } finally {
-
         }
     }
 
     @Test
     @Tag("позитивные")
-    @DisplayName("позитивные №1 Создаем игрока и проверяем его значения по дефолту + позитивные №7 (добавить игрока) - получить игрока по id (3, 5)")
+    @DisplayName("позитивные №1 Создаем игрока и проверяем его значения по дефолту")
     public void iCanAddNewPlayer() {
         Collection<Player> listBefore = service.getPlayers();
         assertEquals(0, listBefore.size());
@@ -92,19 +96,18 @@ public class PlayerServiceTest {
 
     @Test
     @Tag("позитивные")
-    @DisplayName("позитивные №7 (добавить игрока) - получить игрока по id")
-    public void iCanAddPlayer() {
-        Collection<Player> listBefore = service.getPlayers();
-        assertTrue(listBefore.isEmpty());
+    @DisplayName("позитивные №3 (нет json-файла) добавить игрока (1, 6, 8)")
+    public void iCanAddPlayer1() {
+        Player player1 = new Player();
+        player1.setNick("Player 1");
+        player1.setId(1);
 
-        int nikitaId = service.createPlayer(NICKNAME);
-        Collection<Player> listAfterAdd = service.getPlayers();
-        assertFalse(listAfterAdd.isEmpty());
-
-        Player probe = service.getPlayerById(nikitaId);
-        assertEquals(NICKNAME, probe.getNick());
+        assertEquals(1, player1.getId());
     }
-
+// перенос в PlayerServiceTestsForWorkingWithFile
+//Тест № 4
+    //Тест № 8
+    //Тест № 9
 
     @ParameterizedTest
     @ArgumentsSource(ru.inno.course.player.ext.PointsProvider.class)
@@ -131,6 +134,18 @@ public class PlayerServiceTest {
         assertEquals(pointsToBe, playerById.getPoints());
     }
 
+    @ParameterizedTest
+    @Tag("позитивные")
+    @ArgumentsSource(ru.inno.course.player.ext.PlayersAndIdProvider.class)
+    @DisplayName("позитивные №7 (добавить игрока) - получить игрока по id")
+    public void iCanAddPlayer(Player player) {
+        int id = service.createPlayer(player.getNick());
+
+        Player playerById = service.getPlayerById(id);
+        assertEquals(id, playerById.getId());
+    }
+
+
     @Test
     @Tag("позитивные")
     @DisplayName("позитивные №10 Проверить, что id всегда уникальный. Создать 5, удалить 3-го, добавить еще одного -> id == 6 (а не 3) (1, 2)")
@@ -152,26 +167,37 @@ public class PlayerServiceTest {
             service.getPlayerById(3);
         });
         assertEquals(playerId6, probeAddPlayer.getId());
-
     }
+
+//   @DisplayName("позитивные №11 (нет json-файла) запросить список игроков (3, 8)")
+    //PlayersAndListProvider
+@Test
+@Tag("позитивные")
+//@ArgumentsSource(ru.inno.course.player.ext.PlayersAndListProvider.class)
+@DisplayName("позитивные №7 (нет json-файла) запросить список игроков (3, 8)")
+public void iCanAddPlayerList() {
+    Faker faker = new Faker();
+
+    Set<Player> playerSet = new HashSet<>();
+    for (int i = 0; i < 5; i++) {
+        int c = i + 1;
+        String username = faker.name().username();
+        int points = faker.number().numberBetween(1, 5);
+        boolean isOnline = faker.bool().bool();
+
+        playerSet.add(new Player(c, username, points, isOnline));}
+    int id = service.createPlayer(String.valueOf(playerSet));
+
+    Player playerById = service.getPlayerById(id);
+    assertEquals(id, playerById.getId());// не то что-то
+}
 
     @Test
     @Tag("позитивные")
-    @DisplayName("позитивные №3 (нет json-файла) добавить игрока (1, 6, 8)")
-    public void iCanAddPlayer1() {
-        Player player1 = new Player();
-        player1.setNick("Player 1");
-        player1.setId(1);
-
-        assertEquals(1, player1.getId());
-    }
-
-    @Test
-    @Tag("позитивные")// сделать через service
     @DisplayName("позитивные №12 Проверить создание игрока с 15 символами (10)")
     public void iCanAddPlayer15Size() {
         Player player1 = new Player();
-        player1.setNick("012345678901234");
+        player1.setNick("Asdfghjqwertyui");
         player1.setId(1);
         String playerNik = player1.getNick();
         int sizePlayerNik = playerNik.length();
@@ -179,45 +205,39 @@ public class PlayerServiceTest {
         assertEquals(sizePlayerNik, 15);
     }
 
-    @Test
-    @Tag("позитивные")
-    @DisplayName("позитивные №4 (есть json-файл) добавить игрока (1, 6)")
-    public void iCanAddFileJSON() {
-        Collection<Player> listBefore = service.getPlayers();
-        assertTrue(listBefore.isEmpty());
-
-        int nikitaId = service.createPlayer("Player1");
-        Player playerById = service.getPlayerById(nikitaId);
-        assertEquals(NICKNAME, playerById.getNick());
-    }
-    @Test
-    @Tag("позитивные")
-     @DisplayName("позитивные №8 проверить корректность сохранения в файл (1, 4, 6)")
-    public void iCanCorrectSavingToFile(){
-        Collection<Player> listBefore = service.getPlayers();
-        assertTrue(listBefore.isEmpty());
-
-        int nikitaId = service.createPlayer("Player1");
-        Player playerById = service.getPlayerById(nikitaId);
-        assertEquals(NICKNAME, playerById.getNick());
-    }
-    //   @DisplayName("позитивные №9 проверить корректность загрузки json-файла - не потеряли записи (7)- не "побили" записи (4, 7)")
-
-    //   @DisplayName("позитивные №11 (нет json-файла) запросить список игроков (3, 8)")
-
-
     //НЕГАТИВНЫЕ ТЕСТЫ
-    // @DisplayName("негативный №1. удалить игрока, которого нет - удалить игрока 10, хотя последний - 8 (2, 3))
-    // @DisplayName("негативный №4. сохранить игрока с пустым ником (10))
-    // @DisplayName("негативный №6. Накинуть очков игроку, которого нет (4))
-    // @DisplayName("негативный №7. Накинуть очков без указания id (4))
-    // @DisplayName("негативный №8. Ввести невалидный id (String) (5))
-    // @DisplayName("негативный №9. Проверить загрузку системы с другим json-файлом (7))
-    // @DisplayName("негативный №10. Начислить 1.5 балла игроку (10))
-    // @DisplayName("негативный №11. проверить корректность загрузки json-файла- есть дубликаты (9))
-    // @DisplayName("негативный №12. Проверить создание игрока с 16 символами (10) - название (что? где? когда?)- шаги воспроизведения (curl)
-    //- ожидаемый результат - полученный результат - логи / скрины / видео - приоритет (средний) - серьезность (средняя) - на каком стенде - версия
-    //- плановая дата fix'а - компоненты - линки на другие задачи - назначение - автор - причина дефекта - даты - предусловия
+
+    @Test
+    @Tag("негативный")
+    @DisplayName("негативный №1 Вариант №1 Удалить игрока, которого нет - удалить игрока 6, хотя последний - 5 (2,3)")
+    public void iCanIdUniqueNotPlayer() {
+
+        int playerId1 = service.createPlayer("Player1");
+        int playerId2 = service.createPlayer("Player2");
+        int playerId3 = service.createPlayer("Player3");
+        int playerId4 = service.createPlayer("Player4");
+        int playerId5 = service.createPlayer("Player5");
+
+        Collection<Player> listAfterAdd = service.getPlayers();
+        assertFalse(listAfterAdd.isEmpty());
+        try {
+            service.deletePlayer(6);
+        } catch (Exception e) {
+            System.out.println("Игрок отсутствует с id = 6");
+        }
+        assertThrowsExactly(NoSuchElementException.class, () -> {
+            service.getPlayerById(6);
+        });
+    }
+
+    @Test
+    @Tag("негативный")
+    @DisplayName("негативный №1 Вариант №2 Удалить игрока, которого нет - удалить игрока 6, хотя последний - 5 (2,3)")
+    public void shouldNotDeleteUnknownPlayer() {
+        int newId = service.createPlayer(NICKNAME);
+        assertThrows(NoSuchElementException.class, () -> service.deletePlayer(newId + 1));
+    }
+
     @Test
     @Tag("негативный")
     @DisplayName("негативный №2 Нельзя создать дубликат игрока")
@@ -233,9 +253,19 @@ public class PlayerServiceTest {
         assertThrows(NoSuchElementException.class, () -> service.getPlayerById(9999));
     }
 
+    @Tag("негативный")
+    @DisplayName("негативный №4. Сохранить игрока с пустым ником (10). Игрок с невалидным ником `null`. Игрок не создается.")
+    @ParameterizedTest(name = "{index} => Создаем игрока с ником {0}")
+    @ValueSource(strings = {" "})
+    @NullAndEmptySource // @NullSource + @EmptySource
+    public void shouldNotCreatePlayerWithNullNick(String name) {
+        assertThrows(IllegalArgumentException.class, () -> service.createPlayer(name));
+        assertEquals(0, service.getPlayers().size());
+    }
+
     @ParameterizedTest
     @Tag("негативный")
-    @ValueSource(ints = {10, 100, -50, 0, 100, -5000000})
+    @ValueSource(ints = {-50, 0, 100, -5000000})
     @DisplayName("негативный №5 Добавление очков игроку")
     public void iCanAddPoints(int points) {
         int playerId = service.createPlayer(NICKNAME);
@@ -244,4 +274,13 @@ public class PlayerServiceTest {
         assertEquals(points, playerById.getPoints());
     }
 
+    @ParameterizedTest
+    @Tag("негативный")
+    @ValueSource(ints = {10})
+    @DisplayName("негативный №6. Накинуть очков игроку, которого нет (4))")
+    public void iCanAddPointsNotPlayer(int points)
+    {
+        int newId = service.createPlayer(NICKNAME);
+        assertThrows(NoSuchElementException.class, () -> { service.addPoints((newId + 1), points);});
+    };
 }

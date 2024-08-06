@@ -1,4 +1,4 @@
-package ext;
+package ru.inno.course.player.ext;
 
 import java.sql.Connection;
 import org.junit.jupiter.api.extension.ExtensionContext;

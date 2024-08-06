@@ -1,4 +1,4 @@
-package ext;
+package ru.inno.course.player.ext;
 
 import com.github.javafaker.Faker;
 import java.util.HashSet;
